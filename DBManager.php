@@ -56,7 +56,7 @@
             $c = 0;
 
 
-            var_dump($json = json_encode($resultados));
+            var_dump($json = json_encode($resultados, JSON_UNESCAPED_UNICODE));
             
             
 
