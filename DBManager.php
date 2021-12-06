@@ -57,10 +57,33 @@
 
 
             var_dump($json = json_encode($resultados, JSON_UNESCAPED_UNICODE));
-            
-            
 
-            
+        }
+
+        public function add($producto,$puja,$fecha,$cliente) {
+            try {
+                $link = $this->open();
+    
+                $sql = "INSERT INTO articulo(nombre,puja_actual,fecha_fin,id_cliente_ganador) 
+                        VALUES('$producto',$puja,$fecha,$cliente,)";
+    
+                $resultArray = mysqli_query($link, $sql);
+    
+                $this->close($link);
+    
+                $regresa = new \stdClass();
+                $regresa->code = 200;
+                $regresa->resultados = 'Ok';
+    
+                return json_encode($regresa);
+    
+            } catch(Exception $e) {
+                $regresa = new \stdClass();
+                $regresa->code = 500;
+                $regresa->resultados = 'Bad';
+    
+                return json_encode($regresa);
+            }
         }
 
     }
