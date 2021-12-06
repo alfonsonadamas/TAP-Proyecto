@@ -60,12 +60,12 @@
 
         }
 
-        public function add($producto,$puja,$fecha,$cliente) {
+        public function addProducto($producto,$puja,$fecha,$cliente) {
             try {
                 $link = $this->open();
     
                 $sql = "INSERT INTO articulo(nombre,puja_actual,fecha_fin,id_cliente_ganador) 
-                        VALUES('$producto',$puja,$fecha,$cliente,)";
+                        VALUES('$producto',$puja,$fecha,$cliente)";
     
                 $resultArray = mysqli_query($link, $sql);
     
@@ -84,6 +84,54 @@
     
                 return json_encode($regresa);
             }
+        }
+
+        public function addCliente($nombre,$apellidoP,$apellidoM,$contraseña,$email) {
+            try {
+                $link = $this->open();
+    
+                $sql = "INSERT INTO cliente(nombre,apellidoP,apellidoM,contraseña,email) 
+                        VALUES('$nombre',$apellidoP,$apellidoM,$contraseña,$email)";
+    
+                $resultArray = mysqli_query($link, $sql);
+    
+                $this->close($link);
+    
+                $regresa = new \stdClass();
+                $regresa->code = 200;
+                $regresa->resultados = 'Ok';
+    
+                return json_encode($regresa);
+    
+            } catch(Exception $e) {
+                $regresa = new \stdClass();
+                $regresa->code = 500;
+                $regresa->resultados = 'Bad';
+    
+                return json_encode($regresa);
+            }
+        }
+
+        public function find($id) {
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM cliente WHERE id=".$id;
+            
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            $regresa = new \stdClass();
+            $regresa->code = 200;
+            $regresa->resultados = $resultados;
+    
+            return json_encode($regresa);
         }
 
     }

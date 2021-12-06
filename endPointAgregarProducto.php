@@ -8,7 +8,7 @@
     $cliente = $_GET['cliente'];
 
     $manager = new \DBManager();
-    $json = $manager->add($producto,$puja,$fecha,$cliente);
+    $json = $manager->addProducto($producto,$puja,$fecha,$cliente);
 
     echo $json;
 
