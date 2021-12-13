@@ -2,11 +2,11 @@
 
     require 'DBManager.php';
 
-    $email = $_GET['email'];
+    $s = $_GET['s'];
 
     $manager = new \DBManager();
 
-    $json = $manager->find($email);
+    $json = $manager->search($s);
  
         
 

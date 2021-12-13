@@ -1,16 +1,14 @@
 <?php
-
     require 'DBManager.php';
-
-    $email = $_GET['email'];
 
     $manager = new \DBManager();
 
-    $json = $manager->find($email);
- 
-        
+    $json = $manager ->asc();
 
 
     echo $json;
+
+
+
 
 ?>
