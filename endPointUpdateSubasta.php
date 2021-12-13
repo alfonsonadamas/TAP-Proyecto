@@ -6,7 +6,7 @@
     $puja = $_GET['puja'];
 
     $manager = new \DBManager();
-    $json = $manager->updatePuja($id,$puja);
+    $json = $manager->updatePuja($puja,$id);
 
     echo $json;
 
