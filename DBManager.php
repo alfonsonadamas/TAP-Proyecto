@@ -186,7 +186,7 @@
         public function desc(){
             $link = $this->open();
     
-            $sql = "SELECT * FROM articulo ORDER BY nombre DESC";
+            $sql = "SELECT * FROM articulo ORDER BY puja_actual DESC";
 
             $resultArray = mysqli_query($link, $sql);
     
@@ -208,7 +208,7 @@
         public function asc(){
             $link = $this->open();
     
-            $sql = "SELECT * FROM articulo ORDER BY nombre ASC";
+            $sql = "SELECT * FROM articulo ORDER BY puja_actual ASC";
 
             $resultArray = mysqli_query($link, $sql);
     
@@ -255,7 +255,29 @@
         public function cliente_articulo($id){
             $link = $this->open();
     
-            $sql = "SELECT * FROM `cliente_articulo` INNER JOIN articulo ON cliente_articulo.id_articulo = articulo.id_articulo INNER JOIN cliente ON cliente_articulo.id_cliente = cliente.id WHERE id = $id";
+            $sql = "SELECT * FROM `cliente_articulo` INNER JOIN articulo ON cliente_articulo.id_articulo_1 = articulo.id_articulo INNER JOIN cliente ON cliente_articulo.id_cliente = cliente.id WHERE id_articulo = $id";
+
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            // $regresa = new \stdClass();
+            // $regresa->code = 200;
+            // $regresa->resultados = $resultados;
+    
+            return json_encode($resultados);
+        }
+
+        public function cliente($id){
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM `cliente_articulo` INNER JOIN articulo ON cliente_articulo.id_articulo_1 = articulo.id_articulo INNER JOIN cliente ON cliente_articulo.id_cliente = cliente.id WHERE id = $id";
 
             $resultArray = mysqli_query($link, $sql);
     
@@ -299,11 +321,11 @@
             }
         }
 
-        public function updatePuja($puja,$id){
+        public function updatePuja($puja,$id,$idcliente){
             try {
                 $link = $this->open();
     
-                $sql = "UPDATE articulo SET puja_actual=$puja WHERE id_articulo = $id";
+                $sql = "UPDATE articulo SET puja_actual=$puja, cliente_actual=$idcliente WHERE id_articulo = $id";
     
                 $resultArray = mysqli_query($link, $sql);
     
@@ -322,6 +344,163 @@
     
                 return json_encode($regresa);
             }
+        }
+
+        public function updatePujaFinal($id,$idcliente,$status){
+            try {
+                $link = $this->open();
+    
+                $sql = "UPDATE articulo SET cliente_actual=$idcliente, status=$status WHERE id_articulo = $id";
+    
+                $resultArray = mysqli_query($link, $sql);
+    
+                $this->close($link);
+    
+                $regresa = new \stdClass();
+                $regresa->code = 200;
+                $regresa->resultados = 'Ok';
+    
+                return json_encode($regresa);
+    
+            } catch(Exception $e) {
+                $regresa = new \stdClass();
+                $regresa->code = 500;
+                $regresa->resultados = 'Bad';
+    
+                return json_encode($regresa);
+            }
+        }
+
+        public function selectCliente($id_art){
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM articulo INNER JOIN cliente ON articulo.cliente_actual = cliente.id WHERE id_articulo = $id_art";
+
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            // $regresa = new \stdClass();
+            // $regresa->code = 200;
+            // $regresa->resultados = $resultados;
+    
+            return json_encode($resultados);
+        }
+
+        public function selectArt($id_cli){
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM articulo INNER JOIN cliente ON articulo.cliente_actual = cliente.id WHERE id = $id_cli";
+
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            // $regresa = new \stdClass();
+            // $regresa->code = 200;
+            // $regresa->resultados = $resultados;
+    
+            return json_encode($resultados);
+        }
+
+        public function selectPerdidas($id_cli){
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM articulo INNER JOIN cliente ON articulo.cliente_actual = cliente.id WHERE fecha_fin < CURRENT_DATE AND id = $id_cli";
+
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            // $regresa = new \stdClass();
+            // $regresa->code = 200;
+            // $regresa->resultados = $resultados;
+    
+            return json_encode($resultados);
+        }
+
+        public function subastasPterminar(){
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM articulo WHERE fecha_fin > CURRENT_DATE";
+
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            // $regresa = new \stdClass();
+            // $regresa->code = 200;
+            // $regresa->resultados = $resultados;
+    
+            return json_encode($resultados);
+        }
+
+        public function subastasTerminadas($id_art){
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM articulo INNER JOIN cliente ON articulo.cliente_actual = cliente.id WHERE fecha_fin > CURRENT_DATE AND id_articulo = $id_art";
+
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            // $regresa = new \stdClass();
+            // $regresa->code = 200;
+            // $regresa->resultados = $resultados;
+    
+            return json_encode($resultados);
+        }
+
+        public function searchCategoria($categoria){
+            $link = $this->open();
+    
+            $sql = "SELECT * FROM articulo WHERE categoria = '$categoria'";
+
+            $resultArray = mysqli_query($link, $sql);
+    
+            // Los resultados se agregan a un arreglo
+            $resultados = array();
+            while( ($fetch = mysqli_fetch_array($resultArray, MYSQLI_ASSOC)) != NULL) {
+                array_push($resultados, $fetch);
+            }
+    
+            $this->close($link);
+    
+            // $regresa = new \stdClass();
+            // $regresa->code = 200;
+            // $regresa->resultados = $resultados;
+    
+            return json_encode($resultados);
         }
 
     }

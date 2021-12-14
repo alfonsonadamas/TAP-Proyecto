@@ -3,11 +3,11 @@
     require 'DBManager.php';
 
     $id = $_GET['id'];
-    $puja = $_GET['puja'];
+    $status = $_GET["s"];
     $id_cliente = $_GET["id_cliente"];
 
     $manager = new \DBManager();
-    $json = $manager->updatePuja($puja,$id,$id_cliente);
+    $json = $manager->updatePujaFinal($id,$id_cliente,$status);
 
     echo $json;
 
